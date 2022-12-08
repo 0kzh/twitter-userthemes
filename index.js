@@ -1,6 +1,12 @@
 import "./ace.js"
 import "./mode-css.js"
 import "./theme-dreamweaver.js"
+import AceColorPicker from "./ace-colorpicker.js"
+
+var link = document.createElement('link');
+link.setAttribute('rel', 'stylesheet');
+link.setAttribute('href', 'https://cdn.jsdelivr.net/npm/ace-colorpicker@0.0.12/addon/ace-colorpicker.css');
+document.head.appendChild(link);
 
 const applyStyle = (elem, style) => {
   Object.entries(style).forEach(([key, value]) => {
@@ -8,9 +14,8 @@ const applyStyle = (elem, style) => {
   });
 };
 
-const styles = (isDarkMode) => ({
+const styles = {
   editUserThemeBtn: {
-    color: isDarkMode ? "white" : "black",
     fontFamily: "TwitterChirp",
     fontWeight: 700,
     display: "flex",
@@ -18,10 +23,10 @@ const styles = (isDarkMode) => ({
     alignItems: "center",
     gap: "8px",
     border: "none",
-    fontSize: "15px",
+    fontSize: "17px",
     marginRight: "8px",
   }
-});
+};
 
 const editThemeIcon = `
 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="icon">
@@ -69,7 +74,7 @@ const alertModal = `
     <button aria-label="OK">OK</button>
   </section>
 </div>
-`
+`;
 
 const debounce = (func, timeout = 300) => {
   let timer;
@@ -79,8 +84,8 @@ const debounce = (func, timeout = 300) => {
   };
 };
 
-document.addEventListener("mousedown", () => window.mousedown = true)
-document.addEventListener("mouseup", () => window.mousedown = false)
+document.addEventListener("mousedown", () => window.mousedown = true);
+document.addEventListener("mouseup", () => window.mousedown = false);
 document.addEventListener("mouseup", (e) => {
   window.dragTarget = null;
   window.offsetX = 0;
@@ -88,10 +93,12 @@ document.addEventListener("mouseup", (e) => {
 });
 
 document.addEventListener("mousemove", (e) => {
-  const dx = e.clientX - window.offsetX;
-  const dy = e.clientY - window.offsetY;
-  window.dragTarget.style.left = dx + "px";
-  window.dragTarget.style.top = dy + "px";
+  if (window.dragTarget) {
+    const dx = e.clientX - window.offsetX;
+    const dy = e.clientY - window.offsetY;
+    window.dragTarget.style.left = dx + "px";
+    window.dragTarget.style.top = dy + "px";
+  }
 });
 
 const launchAlert = (title, contents) => {
@@ -118,9 +125,9 @@ const launchAlert = (title, contents) => {
 
   const buttons = newAlert.querySelectorAll('button[aria-label="Close"], button[aria-label="OK"]');
   buttons.forEach((button) => {
-    console.log(button)
+    console.log(button);
     button.addEventListener('click', () => {
-      console.log("clicked")
+      console.log("clicked");
       newAlert.remove();
     });
   });
@@ -129,15 +136,14 @@ const launchAlert = (title, contents) => {
 };
 
 const fetchUserFromURL = () => {
-  const url = window.location.href;
-  const queryString = window.location.search;
-  let user = url.split("/").pop();
+  const parser = document.createElement('a');
+  parser.href = window.location.href;
+  const pathname = parser.pathname;
 
-  if (queryString) {
-    user = user.split("?")[0];
-  }
-  return user;
-}
+  // Split the pathname into parts, and return the second part (the user)
+  const pathnameParts = pathname.split('/');
+  return pathnameParts[1];
+};
 
 const setStyleTagContents = (contents) => {
   const styleTag = document.querySelector("#user-style");
@@ -163,10 +169,9 @@ const launchEditor = () => {
 
   const editorInstance = ace.edit("css-editor");
   editorInstance.setTheme("ace/theme/dreamweaver");
-  editorInstance.session.setMode("ace/mode/css");
-  // editorInstance.session.setMode("ace/mode/css", () => {
-  //   window['ace-colorpicker'].load(ace, editor, {});
-  // })
+  editorInstance.session.setMode("ace/mode/css", () => {
+    AceColorPicker.load(ace, editorInstance);
+  });
 
   editorInstance.session.selection.on('changeCursor', () => {
     const { row, column } = editorInstance.getCursorPosition();
@@ -176,17 +181,16 @@ const launchEditor = () => {
   
   const debouncedSave = debounce(setStyleTagContents, 1000);
 
-  const user = getUserFromURL();
   editorInstance.session.on('change', () => {
     const contents = editorInstance.getValue();
     const charCountDiv = editor.querySelector("p.char-count");
     charCountDiv.innerText = `${contents.length} characters`;
 
     // persist in localstorage
-    localStorage.setItem(`css-${user}`, contents);
+    localStorage.setItem("css-contents", contents);
     debouncedSave(contents);
   });
-  editorInstance.setValue(localStorage.getItem(`css-${user}`), "");
+  editorInstance.setValue(localStorage.getItem("css-contents"), "");
 
   const cssEditor = editor.querySelector(".ace_editor");
   cssEditor.style.height = "300px";
@@ -233,9 +237,9 @@ const launchEditor = () => {
       if (response && response.status) {
         const { status } = response;
         if (status === "success") {
-          launchAlert("Theme updated", "Theme published successfully! Anyone with the extension that visits your page will now see your custom theme. Huzzah!")
+          launchAlert("Theme updated", "Theme published successfully! Anyone with the extension that visits your page will now see your custom theme. Huzzah!");
         } else {
-          launchAlert("Failed to update theme", response.data)
+          launchAlert("Failed to update theme", response.data);
         }
       }
     });
@@ -248,9 +252,11 @@ const initialize = () => {
     // also accounts for dimmed mode
     const isDarkMode = document.querySelector("body").style["background-color"] !== "rgb(255, 255, 255)";
 
-    var styleTag = document.createElement('style');
-    styleTag.id = "user-style";
-    document.head.appendChild(styleTag);
+    if (!document.querySelector("#user-style")) {
+      var styleTag = document.createElement('style');
+      styleTag.id = "user-style";
+      document.head.appendChild(styleTag);
+    }
 
     chrome.runtime.sendMessage({
       type: "fetch",
@@ -259,37 +265,42 @@ const initialize = () => {
       if (response && response.status) {
         const { status, data } = response;
         if (status === "success") {
-          setStyleTagContents(data)
+          setStyleTagContents(data);
         } else {
-          console.log(`Could not fetch CSS for user ${user}`)
+          console.log(`Could not fetch CSS for user ${user}`);
         }
       }
     });
 
-    const settingsLink = document.querySelector('[href="/settings/profile"]');
-    const editUserThemeBtn = document.createElement("a");
-    editUserThemeBtn.innerHTML = `${editThemeIcon} Edit Theme`;
-    editUserThemeBtn.className = settingsLink.className;
-    applyStyle(editUserThemeBtn, styles(isDarkMode).editUserThemeBtn);
+    // insert edit theme btn if it doesn't already exist
+    if (!document.querySelector("#edit-theme")) {
+      const settingsLink = document.querySelector('[href="/settings/profile"]');
+      const editUserThemeBtn = document.createElement("a");
+      editUserThemeBtn.id = "edit-theme";
+      editUserThemeBtn.dir = "ltr"
+      editUserThemeBtn.innerHTML = `${editThemeIcon} <span class="${settingsLink.querySelector("span").className}">Edit Theme</span>`;
+      editUserThemeBtn.className = settingsLink.className;
+      applyStyle(editUserThemeBtn, styles.editUserThemeBtn);
 
-    editUserThemeBtn.addEventListener("click", () => {
-      const curEditor = document.querySelector("#editor");
-      if (curEditor) {
-        curEditor.remove();
-      } else {
-        launchEditor();
-      }
-    });
+      editUserThemeBtn.addEventListener("click", () => {
+        const curEditor = document.querySelector("#editor");
+        if (curEditor) {
+          curEditor.remove();
+        } else {
+          launchEditor();
+        }
+      });
 
-    const parent = settingsLink.parentNode;
-    console.log(editUserThemeBtn);
-    parent.insertBefore(editUserThemeBtn, settingsLink);
-}
+      const parent = settingsLink.parentNode;
+      parent.insertBefore(editUserThemeBtn, settingsLink);
+    }
+
+};
 
 var oldHref = document.location.href;
 
 window.onload = function() {
-  var bodyList = document.querySelector("body")
+  var bodyList = document.querySelector("body");
 
   var observer = new MutationObserver(function(mutations) {
     mutations.forEach(function() {
@@ -306,5 +317,15 @@ window.onload = function() {
   };
   
   observer.observe(bodyList, config);
-  initialize()
+  waitForLoadFinish();
 };
+
+function waitForLoadFinish() {
+  var loadingDiv = document.querySelector('[aria-label^="Loading"]');
+
+  if (!loadingDiv) {
+    initialize();
+  } else {
+    setTimeout(waitForLoadFinish, 100);
+  }
+}
