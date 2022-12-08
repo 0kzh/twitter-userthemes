@@ -1,0 +1,162 @@
+:root {
+    --primary-color: #ffedf8;
+    --secondary-color: #fff4fb;
+    --button-color: #ffbce8;
+    --button-hover-color: #ffceee;
+    --logo-color: #ffbce8;
+    --text-color: #885c5c;
+    --subtext-color: #bb89aa;
+    --border-color: #dca1c8;
+    --chat-bubble-color: white;
+    --header-color: #ffdbf3;
+}
+
+body {
+    background: var(--primary-color) !important;
+}
+
+[data-testid="primaryColumn"],
+[aria-label="Trending"]>div>div,
+[role="menu"],
+[role="listbox"],
+[data-testid="DMDrawer"] [role="tablist"],
+[data-testid="DMDrawer"] [role="tablist"] [data-testid="cellInnerDiv"] > div > div, /* Chat Headings */
+[data-testid="conversation"],
+[data-testid="HoverCard"],
+[data-testid="userFollowIndicator"],
+[aria-label="Home timeline"]>div:nth-of-type(3),
+[role="tab"],
+[data-testid="inlinePrompt"],
+section > div,
+[data-testid="DmScrollerContainer"],
+[data-testid="cellInnerDiv"] > div,
+[data-testid="cellInnerDiv"] > div > div
+/* Editor */
+    {
+    background: var(--secondary-color) !important;
+}
+
+[aria-label="Home timeline"]>div:nth-of-type(3) div {
+    background-color: transparent;
+}
+
+[data-testid="UserName"] span {
+    color: var(--text-color);
+}
+
+[data-testid="SideNav_NewTweet_Button"] svg {
+    color: white !important;
+}
+
+/* Generic buttons */
+[role="button"][aria-describedby^="id"],
+[role="button"][style^="background-color"],
+[data-testid="SideNav_NewTweet_Button"],
+[data-testid="tweetButtonInline"],
+[role="status"] > div,
+[role="radio"],
+[aria-label="New Tweets are available. Push period to go to the beginning of your timeline and view them"] {
+    background-color: var(--button-color) !important;
+}
+
+[role="button"][aria-describedby^="id"]:hover,
+[role="button"][style^="background-color"]:hover,
+[data-testid="SideNav_NewTweet_Button"]:hover,
+[data-testid="tweetButtonInline"]:hover,
+[role="status"] > div:hover,
+[role="radio"]:hover{
+    background-color: var(--button-hover-color) !important;
+}
+
+a {
+    color: blue !important;
+}
+
+svg {
+    color: var(--text-color) !important;
+}
+
+nav[aria-label="Primary"] span {
+    color: var(--text-color);
+}
+
+/* Logo */
+[aria-label="Twitter"] svg {
+    color: var(--logo-color) !important;
+}
+
+[data-testid="unlike"] svg {
+    color: rgb(249, 24, 128) !important;
+}
+
+form[role="search"],
+[aria-label="Start a new message"] {
+    background-color: white !important;
+}
+
+form[role="search"] {
+    border-radius: 999px;
+}
+
+form[role="search"] div,
+[aria-label="Start a new message"] div {
+    background-color: unset;
+}
+
+[role="tablist"] {
+    background-color: var(--primary-color);
+}
+
+/* Text */
+[style^="color"],
+[dir="ltr"]:not(html) span,
+[dir="rtl"]:not(html) span,
+[dir="auto"]:not(html) span,
+[data-testid="tweetText"] {
+    color: var(--text-color) !important;
+}
+
+/* Borders */
+main div,
+main nav,
+aside {
+    border-width: 0px !important;
+    border-color: var(--border-color) !important;
+    border-top-color: var(--border-color) !important;
+    border-right-color: var(--border-color) !important;
+    border-left-color: var(--border-color) !important;
+    border-bottom-color: var(--border-color) !important;
+}
+
+[data-testid="tweet"] {
+    border-top-width: 1px !important;
+    border-top-color: var(--border-color) !important;
+}
+
+/* Chat bubbles */
+[data-testid="DMDrawer"] [role="presentation"] {
+    background: var(--chat-bubble-color);
+}
+
+/* However don't apply this to borders that are transparent */
+[style="border-color: rgba(0, 0, 0, 0);"] {
+    border-color: rgba(0, 0, 0, 0) !important;
+}
+
+/* Vertical thread dividers */
+[data-testid="Tweet-User-Avatar"]+div {
+    background-color: var(--border-color);
+}
+
+/* Header */
+[data-testid="DMDrawerHeader"] div,
+[aria-label="Home timeline"]>div:first-child>div:first-child > div {
+    background-color: var(--header-color) !important;
+}
+
+[aria-label="Home timeline"] > div:first-child div,
+[aria-label="Section navigation"] > div:first-child div,
+[aria-label="Lists timeline"] > div:first-child div {
+    background-color: transparent !important;
+}
+
