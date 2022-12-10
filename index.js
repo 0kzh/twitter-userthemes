@@ -1,7 +1,7 @@
-import "./ace.js"
-import "./mode-css.js"
-import "./theme-dreamweaver.js"
-import AceColorPicker from "./ace-colorpicker.js"
+import "./assets/ace.js"
+import "./assets/mode-css.js"
+import "./assets/theme-dreamweaver.js"
+import AceColorPicker from "./assets/ace-colorpicker.js"
 
 var link = document.createElement('link');
 link.setAttribute('rel', 'stylesheet');
@@ -46,6 +46,12 @@ const editorWindow = `
     </div>
   </div>
   <div class="window-body">
+    <div class="theme-selector">
+      <div id="sakura" class="theme-preview status-bar-field">Sakura</div>
+      <div id="pokemon" class="theme-preview status-bar-field">Pokémon</div>
+      <div id="space" class="theme-preview status-bar-field">Space</div>
+      <div id="oldskool" class="theme-preview status-bar-field">Oldskool</div>
+    </div>
     <div class="editor-content field-row-stacked">
       <textarea id="css-editor" style="resize: none;"></textarea>
     </div>
@@ -203,7 +209,7 @@ const launchEditor = () => {
         const newHeight = mutation.contentRect.height;
         const newWidth = mutation.contentRect.width;
 
-        cssEditor.style.height = newHeight - 110 + "px";
+        cssEditor.style.height = newHeight - 162 + "px";
         cssEditor.style.width = newWidth - 32 + "px";
         editorInstance.resize();
       }
@@ -243,6 +249,25 @@ const launchEditor = () => {
         }
       }
     });
+  });
+
+  editor.querySelectorAll(".theme-preview").forEach(themeElem => {
+    const name = themeElem.id
+    themeElem.addEventListener("click", () => {
+      chrome.runtime.sendMessage({
+      type: "get_theme",
+      data: { name }
+    }, function (response) {
+      if (response && response.status) {
+        const { status } = response;
+        if (status === "success") {
+          editorInstance.setValue(response.data)
+        } else {
+          launchAlert("Failed to fetch theme", response.data);
+        }
+      }
+    });
+    })
   });
 };
 
