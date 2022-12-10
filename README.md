@@ -14,6 +14,8 @@ User Themes for Twitter brings this ability to Twitter. Build your own theme usi
 * Navigate to your own profile, click "Edit Theme"
 * Or, navigate to [my profile](https://twitter.com/0k_zh) to see my custom theme
 
+NOTE: Works best when you set your Twitter theme to light mode
+
 ## Developing
 Since Twitter's content-security policy disallows importing scripts from other sources, we bundle all the libraries and dependencies into the `content.js` file.
 Whenever you make a change to `index.js`, run `npm run build` to generate the bundled `content.js` script.
