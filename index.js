@@ -274,9 +274,6 @@ const launchEditor = () => {
 const initialize = () => {
     const user = fetchUserFromURL();
 
-    // also accounts for dimmed mode
-    const isDarkMode = document.querySelector("body").style["background-color"] !== "rgb(255, 255, 255)";
-
     if (!document.querySelector("#user-style")) {
       var styleTag = document.createElement('style');
       styleTag.id = "user-style";
@@ -330,6 +327,11 @@ window.onload = function() {
   var observer = new MutationObserver(function(mutations) {
     mutations.forEach(function() {
       if (oldHref != document.location.href) {
+          const curEditor = document.querySelector("#editor");
+          if (curEditor) {
+            curEditor.remove();
+          }
+          
           oldHref = document.location.href;
           initialize();
       }
