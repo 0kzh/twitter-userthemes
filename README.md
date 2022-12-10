@@ -7,6 +7,12 @@ User Themes for Twitter brings this ability to Twitter. Build your own theme usi
 ![Screenshot](./.preview.jpg)
 
 ## Installation
+### As an extension
+Since manually copying the source can be tedious, I've packaged this boost in an extension. You can download it below:
+
+<a href='https://github.com/0kzh/twitter-userthemes/releases/tag/1.0.0' ><img src='https://svgshare.com/i/ohe.svg' title='' /></a>
+
+### Installing manually
 * Open https://twitter.com in Arc
 * Click the + button on the bottom left and click "New Boost"
 * Select "Custom"
