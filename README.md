@@ -10,7 +10,7 @@ User Themes for Twitter brings this ability to Twitter. Build your own theme usi
 * Open https://twitter.com in Arc
 * Click the + button on the bottom left and click "New Boost"
 * Select "Custom"
-* Replace `styles.css`, `content.js`, and `background.js` with the contents inside the dist folder
+* Replace `styles.css`, `content.js`, and `background.js` with the contents inside the [dist](./dist) folder
 * Navigate to your own profile, click "Edit Theme"
 * Or, navigate to [my profile](https://twitter.com/0k_zh) to see my custom theme
 
