@@ -1,16 +1,11 @@
 {
-  "dependencies": {
-    "ace-colorpicker": "^0.0.12",
-    "brace": "^0.11.1",
-    "monaco-editor": "^0.34.1",
-    "webpack": "^5.75.0"
+  "name": "userthemes-for-twitter",
+  "version": "1.0.0",
+  "description": "Build your own Twitter themes and publish them for everyone to see.",
+  "scripts": {
+    "build": "rollup -c"
   },
   "devDependencies": {
-    "@babel/cli": "^7.19.3",
-    "@babel/core": "^7.20.5",
-    "@babel/preset-env": "^7.20.2",
-    "babel-plugin-inline-import": "^3.0.0",
-    "rollup-plugin-inject": "^3.0.2",
-    "webpack-cli": "^5.0.1"
+    "rollup": "^3.7.2"
   }
 }
