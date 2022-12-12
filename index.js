@@ -58,7 +58,7 @@ const editorWindow = `
     <div class="status-bar">
       <p class="status-bar-field position">Line 0, Col 0</p>
       <p class="status-bar-field char-count">0 characters</p>
-      <p class="status-bar-field">Press F1 for help</p>
+      <p class="status-bar-field">Changes are auto-saved</p>
     </div>
     <section class="field-row actions">
       <button aria-label="Cancel">Cancel</button>
