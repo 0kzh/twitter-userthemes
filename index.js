@@ -107,7 +107,7 @@ document.addEventListener("mousemove", (e) => {
   }
 });
 
-const launchAlert = (title, contents) => {
+const launchAlert = (title, contents, dismissCb) => {
   const newAlert = document.createElement('div');
   newAlert.classList.add('window');
   newAlert.style.width = "300px";
@@ -120,7 +120,7 @@ const launchAlert = (title, contents) => {
   titleBar.textContent = title;
 
   const message = newAlert.querySelector('.message');
-  message.textContent = contents;
+  message.innerHTML = contents;
 
   const header = newAlert.querySelector(".header");
   header.addEventListener("mousedown", (e) => {
@@ -133,13 +133,24 @@ const launchAlert = (title, contents) => {
   buttons.forEach((button) => {
     console.log(button);
     button.addEventListener('click', () => {
-      console.log("clicked");
       newAlert.remove();
+      dismissCb();
     });
   });
 
   document.body.appendChild(newAlert);
 };
+
+const launchOnboardingAlert = () => {
+  launchAlert("Welcome!", `
+    <b>✨ Welcome to User Themes for Twitter! ✨</b>
+    <p>This extension allows you to build custom themes for your Twitter profile and publish them for everyone to see. </p>
+    <p>To get started, try visiting <a href="https://twitter.com/0k_zh">a profile</a> with a custom theme.</p>
+    <p>Or, head to your own profile and click "Edit Theme"</p>
+  `, () => {
+    localStorage.setItem('hasSeenOnboardingAlert', true);
+  });
+}
 
 const fetchUserFromURL = () => {
   const parser = document.createElement('a');
@@ -252,7 +263,7 @@ const launchEditor = () => {
   });
 
   editor.querySelectorAll(".theme-preview").forEach(themeElem => {
-    const name = themeElem.id
+    const name = themeElem.id;
     themeElem.addEventListener("click", () => {
       chrome.runtime.sendMessage({
       type: "get_theme",
@@ -261,13 +272,13 @@ const launchEditor = () => {
       if (response && response.status) {
         const { status } = response;
         if (status === "success") {
-          editorInstance.setValue(response.data)
+          editorInstance.setValue(response.data);
         } else {
           launchAlert("Failed to fetch theme", response.data);
         }
       }
     });
-    })
+    });
   });
 };
 
@@ -299,7 +310,7 @@ const initialize = () => {
       const settingsLink = document.querySelector('[href="/settings/profile"]');
       const editUserThemeBtn = document.createElement("a");
       editUserThemeBtn.id = "edit-theme";
-      editUserThemeBtn.dir = "ltr"
+      editUserThemeBtn.dir = "ltr";
       editUserThemeBtn.innerHTML = `${editThemeIcon} <span class="${settingsLink.querySelector("span").className}">Edit Theme</span>`;
       editUserThemeBtn.className = settingsLink.className;
       applyStyle(editUserThemeBtn, styles.editUserThemeBtn);
@@ -323,6 +334,10 @@ var oldHref = document.location.href;
 
 window.onload = function() {
   var bodyList = document.querySelector("body");
+
+  if (!localStorage.getItem('hasSeenOnboardingAlert')) {
+    launchOnboardingAlert();
+  }
 
   var observer = new MutationObserver(function(mutations) {
     mutations.forEach(function() {
